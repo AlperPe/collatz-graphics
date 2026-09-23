@@ -4,24 +4,26 @@ unsigned long long CalculateShortCut(unsigned long long n, int k) {
  unsigned long long power_of_two = 1ULL << k;
  return (9 * n + 3 + power_of_two) / power_of_two;
 }
-int main() {
- std::cout << "=== 0(1) COLLATZ GENERAL MODEL ===" << std::endl;
 
- unsigned long long test_values[] = {7, 15, 31};
- int k_values[] = {1, 2, 3};
- 
- for (int i = 0; i < 3; i++) {
-   unsigned long  long n = test_values[i];
-   int k = k_values[i];
-   unsigned long long next_n = CalculateShortCut(n, k);
-   
-   std::cout << "n = " << n << ", k = " << k << " --> Next Number: " << next_n << std::endl;
- }
 
- 
- std::cout << "=== 0(1) COLLATZ ANALYZE MODEL ===" << std::endl;
- std::cout << "=================================" << std::endl;
+void simulateA4Conservation(unsigned long long N) {
+ double c = 0.005;
+ double base_sum = N * 0.67;
+ double midpoint = base_sum / 2.0;
+ double deficit = c * N;
+ double upper_layer_sum = midpoint - deficit;
 
- return 0;
+ std::cout << "--- A4 Macro-Saved Analyze (N = " << N << ") ---" << std::endl;
+ std::cout << "Midpoint: " << midpoint << std::endl;
+ std::cout << "Diff (c * N): " << deficit << std::endl;
+ std::cout << "Total Upper Layer (L >= 3): " << upper_layer_sum << std::endl;
 }
 
+int main() {
+ std::cout << "=== A1-A3 SYSTEM MODEL ===" << std::endl;
+ simulateA4Conservation(1000);
+ std::cout << "--------------------------------------" << std::endl;
+ std::cout << "======================================" << std::endl;
+ return 0;
+}
+ 
