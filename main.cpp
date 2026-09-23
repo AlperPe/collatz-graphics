@@ -1,29 +1,48 @@
 #include <iostream>
+#include <string>
 
+// O(1) Analytical Shortcut Function
 unsigned long long CalculateShortCut(unsigned long long n, int k) {
- unsigned long long power_of_two = 1ULL << k;
- return (9 * n + 3 + power_of_two) / power_of_two;
+    unsigned long long power_of_two = 1ULL << k;
+    return (9 * n + 3 + power_of_two) / power_of_two;
 }
 
+// G1 / G2 Modular Classification and k Prediction
+void classifyAndExecute(unsigned long long n) {
+    int k = 1;
+    std::string group = "";
 
-void simulateA4Conservation(unsigned long long N) {
- double c = 0.005;
- double base_sum = N * 0.67;
- double midpoint = base_sum / 2.0;
- double deficit = c * N;
- double upper_layer_sum = midpoint - deficit;
+    if (n % 4 == 3) {
+        k = 1;
+        group = "G1 (%50 zone, k=1)";
+    } else if (n % 8 == 1) {
+        k = 2;
+        group = "G2 (25% zone, k=2)";
+    } else if (n % 16 == 13) {
+        k = 3;
+        group = "G2 (12.5% zone, k=3)";
+    } else {
+        k = 4;
+        group = "G2 (Longest Zone, k>=4)";
+    }
 
- std::cout << "--- A4 Macro-Saved Analyze (N = " << N << ") ---" << std::endl;
- std::cout << "Midpoint: " << midpoint << std::endl;
- std::cout << "Diff (c * N): " << deficit << std::endl;
- std::cout << "Total Upper Layer (L >= 3): " << upper_layer_sum << std::endl;
+    unsigned long long next_n = CalculateShortCut(n, k);
+
+    std::cout << "Number (n): " << n << " -> group: " << group 
+              << " | Result Number k: " << k 
+              << " | Next Number: " << next_n << std::endl;
 }
 
 int main() {
- std::cout << "=== A1-A3 SYSTEM MODEL ===" << std::endl;
- simulateA4Conservation(1000);
- std::cout << "--------------------------------------" << std::endl;
- std::cout << "======================================" << std::endl;
- return 0;
+    std::cout << "=== G1 / G2 MODULAR ANALYZE MODEL ===" << std::endl;
+    
+    unsigned long long test_set[] = {7, 9, 13, 5};
+    
+    for (int i = 0; i < 4; i++) {
+        classifyAndExecute(test_set[i]);
+    }
+    
+    std::cout << "=====================================" << std::endl;
+    
+    return 0;
 }
- 
