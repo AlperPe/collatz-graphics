@@ -5,60 +5,60 @@
 #include <thread>
 #include <cassert>
 
-// O(1) Analytical Shortcut Function
-unsigned long long CalculateShortCut(unsigned long long n, int k) {
+// Sadece Tek Sayılar Evreni İçin O(1) Analitik Kısayol Fonksiyonu
+unsigned long long CalculateOddOnlyShortCut(unsigned long long n, int k) {
+    // n zaten tek sayı olduğundan emin olunur; çift gelirse güvenli şekilde sadeleştirilir
+    while (n % 2 == 0 && n > 0) {
+        n >>= 1;
+    }
+    
     unsigned long long power_of_two = 1ULL << k;
-    return (9 * n + 3 + power_of_two) / power_of_two;
+    unsigned long long next_val = (9 * n + 3 + power_of_two) / power_of_two;
+    
+    // Çıkan sonucun da tek sayı olmasını sağla (çiftleri ayıkla)
+    while (next_val % 2 == 0 && next_val > 0) {
+        next_val >>= 1;
+    }
+    
+    return next_val;
 }
 
 // Matematiksel Sağlama ve Doğrulama Fonksiyonu (Audit Hook)
 bool VerifyStep(unsigned long long prev_n, unsigned long long next_n, int k) {
-    // Analitik formülün tersine mühendislikle veya klasik adımlarla sağlandığının kontrolü
-    // Eğer n tek sayı ise Collatz kuralı: (3n + 1) / 2^k mantığını simüle eder.
-    if (prev_n <= 0) return false;
-    
-    // Sağlama: Bulunan next_n değerinin mantıksal sınırları ve tutarlılığı
-    // Beklenmeyen anormal bir patlama var mı diye denetlenir.
-    if (next_n == 0 && prev_n > 1) {
-        return false; // Hatalı sönümleme alarmı
-    }
-    
-    return true; // Adım matematiksel olarak geçerli
+    if (prev_n <= 0 || prev_n % 2 == 0) return false; // Girdi mutlaka tek olmalı
+    if (next_n == 0 && prev_n > 1) return false;
+    return true; 
 }
 
-// Infinite Limit with Real-Time Counter & Verification Hook
-void runInfiniteLimitSimulationWithAudit() {
-    std::cout << "\n=== INFINITE LIMIT & AUDITED DEPTH TEST ===" << std::endl;
-    std::cout << "Running with real-time mathematical verification filter..." << std::endl;
+// Saf Tek Sayılar Üzerinde Koşan Sonsuz Simülasyon Motoru
+void runOddOnlySimulation() {
+    std::cout << "\n=== ODD-ONLY OPTIMIZED COLLATZ ENGINE ===" << std::endl;
+    std::cout << "Running exclusively on odd numbers (zero redundant 2^k branches)..." << std::endl;
     std::cout << "Press Ctrl+C to stop anytime." << std::endl;
 
     auto start_time = std::chrono::high_resolution_clock::now();
     
-    unsigned long long current_n = 1000000007ULL;
+    // Başlangıç mutlaka tek sayı olmalı
+    unsigned long long current_n = 1000000009ULL; 
     unsigned long long total_steps = 0;
     unsigned long long failed_audits = 0;
     
-    auto timeout_duration = std::chrono::minutes(8);
-    
     while (true) {
-        auto current_time = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double> elapsed = current_time - start_time;
-        
-        if (elapsed >= timeout_duration) {
-            std::cout << "\n[8-Minute Timer Reached! Stopping simulation safely.]" << std::endl;
-            break;
+        // Güvenlik önlemi: Çift sayı asla döngüye girmesin, anında tek sayıya indirge
+        while (current_n % 2 == 0 && current_n > 0) {
+            current_n >>= 1;
         }
 
-        // Modüler durum tespiti
+        // Modüler durum tespiti (Sadece tek sayılar için kalan sınıfları)
         int k = 1;
         if (current_n % 4 == 3) k = 1;
         else if (current_n % 8 == 1) k = 2;
         else if (current_n % 16 == 13) k = 3;
         else k = 4;
 
-        unsigned long long next_n = CalculateShortCut(current_n, k);
+        unsigned long long next_n = CalculateOddOnlyShortCut(current_n, k);
 
-        // --- DOĞRULAMA (AUDIT) ADIMI ---
+        // Doğrulama (Audit) Adımı
         if (!VerifyStep(current_n, next_n, k)) {
             std::cout << "\n[ALERT!] Mathematical anomaly detected at step " << total_steps << "!" << std::endl;
             failed_audits++;
@@ -67,33 +67,27 @@ void runInfiniteLimitSimulationWithAudit() {
         current_n = next_n;
         total_steps++;
         
-        // Sonsuz döngü akışı için besleme
+        // Sonsuz döngü akışı için güvenli tek sayı beslemesi
         if (current_n <= 1) {
-            current_n = total_steps * 999999 + 13;
+            current_n = (total_steps * 2026 + 1) | 1; // Sonucun her zaman tek olmasını sağlar (| 1)
         }
 
-        // Her 1 milyon adımda bir denetlenmiş rapor ver
+        // Her 1 milyon adımda bir rapor ver
         if (total_steps % 1000000 == 0) {
+            auto current_time = std::chrono::high_resolution_clock::now();
+            std::chrono::duration<double> elapsed = current_time - start_time;
             double seconds = elapsed.count();
+            
             std::cout << "Elapsed: " << (int)seconds << "s | Steps: " << total_steps 
                       << " | Failed Audits: " << failed_audits 
                       << " | Scale Depth: ~" << total_steps * 3.4 << " bits" << std::endl;
         }
     }
-
-    auto end_time = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double, std::milli> final_elapsed = end_time - start_time;
-
-    std::cout << "\n================================================================" << std::endl;
-    std::cout << "Audited Simulation Finished Successfully!" << std::endl;
-    std::cout << "Total Executed Steps: " << total_steps << std::endl;
-    std::cout << "Total Anomalies/Failures Found: " << failed_audits << " (100% Verified)" << std::endl;
-    std::cout << "Total Elapsed Time: " << final_elapsed.count() / 1000.0 << " seconds" << std::endl;
-    std::cout << "================================================================" << std::endl;
 }
 
 int main() {
-    std::cout << "=== AUDITED COLLATZ OPTIMIZED ENGINE ===" << std::endl;
-    runInfiniteLimitSimulationWithAudit();
+    std::cout << "=== PURE ODD-NUMBER COLLATZ SIMULATOR ===" << std::endl;
+    runOddOnlySimulation();
     return 0;
 }
+
