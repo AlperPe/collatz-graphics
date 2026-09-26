@@ -1,4 +1,5 @@
 # Modular Analytical Collatz Simulation & Autonomous Audit Architecture
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22972921.svg)](https://doi.org/10.5281/zenodo.22972921)
 
 ## 1. Introduction and Architectural Overview
 Classical brute-force approaches to trajectory verification in the Collatz conjecture ($3x + 1$ problem) frequently incur significant computational overhead and hardware strain. This system integrates a high-performance C++ computation engine with a Python-based autonomous auditing layer to process large-scale numerical ranges with high efficiency and low thermal impact.
